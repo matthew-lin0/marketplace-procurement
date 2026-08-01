@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Marketplace Eval Capture",
+  "version": "0.1.0",
+  "description": "Snapshots the listing in the active tab to a local eval dataset. Sends only to localhost.",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.facebook.com/*",
+    "https://*.craigslist.org/*",
+    "http://localhost:7331/*"
+  ],
+  "action": {
+    "default_title": "Capture this listing",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

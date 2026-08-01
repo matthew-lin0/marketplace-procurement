@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font: 13px/1.5 -apple-system, system-ui, sans-serif;
+        width: 300px;
+        margin: 0;
+        padding: 14px;
+      }
+      h1 { font-size: 14px; margin: 0 0 10px; }
+      label { display: block; margin: 8px 0 3px; font-weight: 600; font-size: 12px; }
+      select, input, button { width: 100%; box-sizing: border-box; padding: 6px; font-size: 13px; }
+      button { margin-top: 12px; padding: 8px; cursor: pointer; font-weight: 600; }
+      #status { margin-top: 10px; font-size: 12px; white-space: pre-wrap; }
+      .ok { color: #137333; }
+      .err { color: #c5221f; }
+      .hint { color: #666; font-size: 11px; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Capture listing</h1>
+
+    <label for="category">Category</label>
+    <select id="category">
+      <option value="home_gym">Home gym (dev)</option>
+      <option value="bicycle">Bicycle (dev)</option>
+      <option value="power_tool">Power tool (dev)</option>
+      <option value="sofa">Sofa (holdout)</option>
+      <option value="laptop">Laptop (holdout)</option>
+      <option value="co2_incubator">CO2 incubator (holdout, zero-shot)</option>
+    </select>
+
+    <label for="statedModel">Stated model, if the listing says one</label>
+    <input id="statedModel" type="text" placeholder="e.g. Rogue R-3" />
+    <div class="hint">
+      Filling this in makes the listing self-labeling: the string is scrubbed
+      from every field before the model sees anything, then scored against.
+      Leave blank when the listing genuinely doesn't state a model.
+    </div>
+
+    <button id="capture">Capture</button>
+    <div id="status"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

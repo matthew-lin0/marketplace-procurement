@@ -1,0 +1,65 @@
+category: power_tool
+communities:
+  - "reddit.com/r/Tools"
+  - "reddit.com/r/BuyItForLife"
+  - "reddit.com/r/MilwaukeeTool"
+  - "reddit.com/r/Dewalt"
+  - "garagejournal.com/forum"
+attributes:
+  - key: battery_platform
+    mattersBecause: >-
+      The hidden decision factor in every cordless purchase. Batteries are not
+      cross-compatible between brands, and a bare tool on a platform you do not own
+      means buying into a $100-200 battery and charger before you can use it. Conversely
+      a bare tool on a platform you already own is a bargain.
+    visualTells: >-
+      The battery foot is the tell: DeWalt 20V MAX has a flat rectangular slide-on pack
+      with a yellow shell, Milwaukee M18 is red with a distinct rail profile, Makita LXT
+      is teal with a slide rail, Ryobi ONE+ is lime green. Look at the tool's battery
+      receptacle even when no battery is pictured.
+    askSeller: "Which battery platform is it, and does the sale include batteries and a charger?"
+    decisionWeight: high
+
+  - key: batteries_included
+    mattersBecause: >-
+      Battery packs often exceed the value of the bare tool. A "kit" listing photo may
+      show batteries that are not actually included, and lithium packs degrade with age
+      regardless of use.
+    visualTells: >-
+      Count distinct battery packs across all photos, and check the amp-hour rating
+      printed on the pack face (2.0Ah, 5.0Ah, 12.0Ah). Look for a charger in the
+      background.
+    askSeller: "How many batteries are included, what Ah, and how old are they?"
+    decisionWeight: high
+
+  - key: brushless_motor
+    mattersBecause: >-
+      Brushless motors run longer per charge and last substantially longer; the same
+      tool line often sells both, at a meaningful price difference, with near-identical
+      housings.
+    visualTells: >-
+      Manufacturers advertise it: look for "BRUSHLESS" printed on the motor housing or
+      the tool body. Absence of the badge on a modern tool usually means brushed.
+    askSeller: "Is the motor brushless?"
+    decisionWeight: medium
+
+  - key: generation_and_age
+    mattersBecause: >-
+      Tool lines are revised frequently, and an older generation on the same platform
+      can be worth half of the current one while looking similar in a photo.
+    visualTells: >-
+      The model number is on the nameplate near the battery foot or on the tool's belt
+      clip side. Also check for a date code stamped near the nameplate.
+    askSeller: "What is the exact model number, and roughly what year did you buy it?"
+    decisionWeight: high
+
+  - key: wear_and_abuse
+    mattersBecause: >-
+      A tool used on a job site daily for two years is a different purchase from a
+      homeowner tool used twice, at the same nominal age.
+    visualTells: >-
+      Check the chuck jaws for rounding, the housing for deep gouges versus light
+      scuffing, and the rubber overmold for tearing. Concrete dust in the vents
+      indicates masonry work. Paint transfer on the housing suggests a job-site tote.
+    askSeller: "Was this used professionally or for home projects?"
+    decisionWeight: medium

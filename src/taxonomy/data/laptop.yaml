@@ -1,0 +1,66 @@
+# Easy-mode control category: specs are usually stated in the text, brands are
+# highly legible, and there is a dense public spec corpus. If T1 and T2 do not
+# perform well here, the problem is the harness, not the task.
+category: laptop
+communities:
+  - "reddit.com/r/SuggestALaptop"
+  - "reddit.com/r/laptops"
+  - "reddit.com/r/thinkpad"
+  - "reddit.com/r/macbook"
+  - "notebookcheck.net"
+attributes:
+  - key: exact_model_and_year
+    mattersBecause: >-
+      Laptop model lines are revised annually with large performance differences under
+      an identical chassis. Year determines remaining OS support, which caps useful
+      life regardless of condition.
+    visualTells: >-
+      The model and serial are on the bottom case in small print. On MacBooks look for
+      the "Model A####" line. Screen bezel proportions and port selection also date
+      the generation.
+    askSeller: "What is the exact model and model year? The bottom-case model number is ideal."
+    decisionWeight: high
+
+  - key: battery_health
+    mattersBecause: >-
+      Battery replacement runs $80-250 depending on model and is the most common hidden
+      cost. Cycle count and health percentage are readable in software and never
+      appear in listings.
+    visualTells: >-
+      A swollen battery shows as a trackpad that sits proud of the case or a case that
+      does not close flat. Check any side-profile photo for a gap along the seam.
+    askSeller: "What is the battery cycle count and health percentage?"
+    decisionWeight: high
+
+  - key: storage_and_memory_upgradeability
+    mattersBecause: >-
+      Soldered RAM and storage mean the configuration you buy is permanent. An 8 GB
+      soldered machine has a much shorter useful life than an identical-looking 8 GB
+      machine with SODIMM slots.
+    visualTells: >-
+      Not visible externally; determine from the identified model. This attribute
+      is a spec-lookup target once T1 succeeds.
+    askSeller: "How much RAM and storage, and are either upgradeable on this model?"
+    decisionWeight: high
+
+  - key: activation_lock_status
+    mattersBecause: >-
+      An iCloud- or MDM-locked machine is worth scrap value only, and it is
+      indistinguishable from a working machine in photos. This is the single largest
+      fraud vector in used laptop sales.
+    visualTells: >-
+      Only visible if a photo shows the machine booted to a login or activation screen.
+      A listing that shows only a powered-off laptop is a mild negative signal.
+    askSeller: "Is it signed out of iCloud / removed from Find My, and is it free of MDM enrollment?"
+    decisionWeight: high
+
+  - key: screen_condition
+    mattersBecause: >-
+      Panel replacement often exceeds the value of an older machine. Backlight bleed
+      and dead pixels are invisible in a photo of a powered-off laptop.
+    visualTells: >-
+      Insist on a powered-on photo. On a powered-off screen look for delamination at
+      the edges and pressure marks. Photos taken deliberately off-angle can hide
+      panel defects.
+    askSeller: "Can you send a photo of the screen powered on showing a white background?"
+    decisionWeight: medium

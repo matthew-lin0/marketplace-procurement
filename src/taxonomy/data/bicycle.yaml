@@ -1,0 +1,77 @@
+category: bicycle
+communities:
+  - "reddit.com/r/bicycling"
+  - "reddit.com/r/cycling"
+  - "reddit.com/r/MTB"
+  - "reddit.com/r/bikewrench"
+  - "weightweenies.starbike.com"
+attributes:
+  - key: groupset_tier
+    mattersBecause: >-
+      Groupset tier drives more of a used bike's value than the frame on most builds.
+      Shimano 105 / Ultegra / Dura-Ace and SRAM Rival / Force / Red are separated by
+      hundreds to thousands of dollars on otherwise identical frames.
+    visualTells: >-
+      The tier is printed on the rear derailleur cage, the crank arm, and the brake
+      calipers. Zoom the drive-side crank arm first; the model name is silkscreened
+      near the pedal spindle. Check that the derailleur, crank, and cassette all match
+      tier: mixed groupsets are common and price to the lowest component.
+    askSeller: "What groupset is it, and are all components the same tier?"
+    decisionWeight: high
+
+  - key: frame_material
+    mattersBecause: >-
+      Carbon frames can hide impact damage that is a total loss; aluminum and steel
+      show damage visibly and are repairable. This changes both value and inspection
+      priority.
+    visualTells: >-
+      Carbon shows a woven texture under clear coat and has organic, molded tube
+      junctions. Aluminum shows welded beads at the joints. Steel tubes are thin-walled
+      and round with lugged or smoothly filleted joints. Check the seat tube for a
+      material decal.
+    askSeller: "What is the frame material, and has it had any crash damage?"
+    decisionWeight: high
+
+  - key: frame_size
+    mattersBecause: >-
+      A bike two sizes off does not fit and cannot be made to fit; it is the most
+      common cause of a used-bike purchase becoming a resale.
+    visualTells: >-
+      Size is often printed on the seat tube or on a sticker under the bottom bracket.
+      Otherwise estimate from the seat tube length relative to the 700c wheel (622 mm
+      bead diameter).
+    askSeller: "What frame size is it, in cm or S/M/L?"
+    decisionWeight: high
+
+  - key: drivetrain_wear
+    mattersBecause: >-
+      A worn chain, cassette, and chainrings replaced together run $150-400 depending
+      on tier. Sellers frequently describe a drivetrain at the end of its life as
+      "just needs a tune-up."
+    visualTells: >-
+      Look at the cassette teeth in profile: healthy teeth are symmetric, worn teeth
+      are shark-finned with a hooked leading edge. Check chainring teeth the same way.
+      A very clean chain on a dirty drivetrain suggests a recent cosmetic clean.
+    askSeller: "How many miles are on the current chain and cassette?"
+    decisionWeight: medium
+
+  - key: wheelset_value
+    mattersBecause: >-
+      Wheels are frequently upgraded and can represent a large share of the build's
+      value; conversely a downgraded wheelset on a nice frame is a hidden cost.
+    visualTells: >-
+      Brand and model are printed on the rim sidewall and hub shell. Deep-section rims
+      (40 mm+) indicate aftermarket carbon. Compare to the entry-level wheels the
+      frame's tier would have shipped with.
+    askSeller: "Are the wheels original to the bike or an upgrade?"
+    decisionWeight: medium
+
+  - key: brake_type
+    mattersBecause: >-
+      Disc versus rim brakes determines wheel compatibility for any future upgrade and
+      is a strong dating signal for the frame generation.
+    visualTells: >-
+      Disc brakes have a rotor at the hub center and a caliper at the fork or chainstay.
+      Rim brakes have calipers gripping the rim at the fork crown and seat stays.
+    askSeller: "Disc or rim brakes? If disc, hydraulic or mechanical?"
+    decisionWeight: medium

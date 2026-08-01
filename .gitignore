@@ -1,0 +1,22 @@
+node_modules/
+*.log
+.DS_Store
+
+# ---------------------------------------------------------------------------
+# LOCAL ONLY — NEVER PUSHED.
+# Snapshots contain other people's listing photos and descriptions: faces,
+# house interiors, and enough detail to locate a seller. Pushing them anywhere,
+# including a private repo, puts scraped marketplace content on a third-party
+# server. The manifest and labels below carry the expensive part (our own
+# judgments) and nothing sensitive, so those DO belong in git.
+# ---------------------------------------------------------------------------
+data/listings/
+
+# Eval outputs reference listing content; regenerate rather than commit.
+data/reports/
+data/runs/
+
+# Measured locally and version-specific to the installed Claude Code build.
+# Re-measure with `npm run baseline` rather than trusting a committed value.
+data/cost-baseline.json
+data/sentiment-cache/

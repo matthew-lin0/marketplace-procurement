@@ -1,0 +1,61 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import YAML from 'yaml';
+import { TAXONOMY_DIR } from '../config.js';
+import { CategoryTaxonomy, type CategoryKey } from '../schema/index.js';
+
+/**
+ * Taxonomy is DATA, not code, so it can be extended by whoever knows the
+ * domain rather than whoever knows TypeScript.
+ *
+ * `co2_incubator` deliberately has no file. That is the zero-shot held-out
+ * category, and the gap between it and the seeded average is the most
+ * decision-relevant number in the whole eval: the difference between a general
+ * tool and a hand-curation business.
+ */
+
+const cache = new Map<CategoryKey, CategoryTaxonomy | null>();
+
+export async function loadTaxonomy(category: CategoryKey): Promise<CategoryTaxonomy | null> {
+  if (cache.has(category)) return cache.get(category) ?? null;
+
+  const file = path.join(TAXONOMY_DIR, `${category}.yaml`);
+  let parsed: CategoryTaxonomy | null = null;
+  try {
+    const raw = await fs.readFile(file, 'utf8');
+    parsed = CategoryTaxonomy.parse(YAML.parse(raw));
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+    parsed = null; // Expected for the held-out category.
+  }
+  cache.set(category, parsed);
+  return parsed;
+}
+
+/** Renders the taxonomy into prompt text. Returns '' when no taxonomy exists,
+ *  which is exactly the zero-shot condition we want to measure. */
+export function renderTaxonomyForPrompt(
+  taxonomy: CategoryTaxonomy | null,
+  opts: { includeVisualTells: boolean } = { includeVisualTells: true },
+): string {
+  if (!taxonomy) return '';
+
+  const lines = taxonomy.attributes.map((a) => {
+    const parts = [
+      `- key: ${a.key}`,
+      `  why it matters: ${a.mattersBecause}`,
+      `  decision weight: ${a.decisionWeight}`,
+    ];
+    if (opts.includeVisualTells && a.visualTells) {
+      parts.push(`  where to look: ${a.visualTells}`);
+    }
+    parts.push(`  ask the seller: ${a.askSeller}`);
+    return parts.join('\n');
+  });
+
+  return `Decision-relevant attributes for this category:\n${lines.join('\n')}`;
+}
+
+export function communitiesFor(taxonomy: CategoryTaxonomy | null): string[] {
+  return taxonomy?.communities ?? [];
+}

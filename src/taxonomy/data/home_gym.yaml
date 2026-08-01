@@ -1,0 +1,77 @@
+category: home_gym
+communities:
+  - "reddit.com/r/homegym"
+  - "reddit.com/r/weightroom"
+  - "reddit.com/r/fitness"
+  - "forum.roguefitness.com"
+attributes:
+  - key: upright_steel_gauge
+    mattersBecause: >-
+      11-gauge steel handles heavier loads and resists deflection under rack pulls
+      and heavy squats; 14-gauge is meaningfully lighter duty and prices well below
+      it. This single spec accounts for much of the price spread between racks that
+      look identical in a wide photo.
+    visualTells: >-
+      Compare wall thickness at an open tube end or at the bolt holes. 11-gauge reads
+      as a visibly thick rim (roughly 1/8 inch); 14-gauge looks thin, almost sheet-like.
+      Look for a cut end, the top of an upright, or the hardware holes in a close shot.
+    askSeller: "Is the steel 11-gauge or 14-gauge?"
+    decisionWeight: high
+
+  - key: upright_dimensions
+    mattersBecause: >-
+      3x3 uprights accept the large aftermarket attachment ecosystem; 2x3 and 2x2 do
+      not cross-fit. Buying a rack whose uprights do not match the attachments you
+      want strands you.
+    visualTells: >-
+      Judge the upright against a known reference in frame: a standard barbell sleeve
+      is about 2 inches across, a 45 lb plate is 17.7 inches. A 3x3 upright is
+      noticeably squarer and wider than the bar sleeve; 2x3 reads as a rectangle.
+    askSeller: "Are the uprights 3x3, 2x3, or 2x2?"
+    decisionWeight: high
+
+  - key: hole_spacing_and_size
+    mattersBecause: >-
+      5/8 inch holes on 2 inch spacing (1 inch through the bench zone) is the common
+      standard; 1 inch holes or odd spacing restricts attachment compatibility and
+      resale.
+    visualTells: >-
+      Count holes against the 17.7 inch plate diameter to estimate spacing. Compare
+      hole diameter to the 5/8 inch hardware bolts usually visible in the same shot.
+    askSeller: "What is the hole diameter and spacing?"
+    decisionWeight: medium
+
+  - key: included_plates_and_bar
+    mattersBecause: >-
+      Bundled plates and a bar frequently exceed the value of the rack itself, and
+      are routinely visible in photos while going unmentioned in the text. Iron plates
+      run roughly $1-2/lb used; a decent bar is $150-300.
+    visualTells: >-
+      Look at the background and floor of every photo, not just the subject. Count
+      plates by diameter (45 lb plates are 17.7 inches, roughly the same as a bumper).
+      Check for a bar resting in the J-cups or leaning against a wall.
+    askSeller: "Does the price include the plates and bar shown in the photos?"
+    decisionWeight: high
+
+  - key: rust_and_finish_condition
+    mattersBecause: >-
+      Surface rust is cosmetic and cheap to address; pitting inside the uprights or at
+      weld seams is structural and is a walk-away. Powder coat chips at the J-cup
+      contact points are normal wear, not damage.
+    visualTells: >-
+      Orange-brown mottling on flat surfaces is surface rust. Dark pitting with texture,
+      especially at weld seams and the base plate, indicates deeper corrosion. Check
+      base plates where the rack met a garage floor.
+    askSeller: "Is there any rust beyond surface discoloration, especially at the welds or base?"
+    decisionWeight: medium
+
+  - key: disassembly_and_transport
+    mattersBecause: >-
+      A bolt-together rack disassembles into a car; a welded rack needs a truck plus a
+      second person, and that logistics cost is real money against the purchase price.
+    visualTells: >-
+      Look for bolt heads at every upright-to-crossmember junction (bolt-together) versus
+      continuous smooth weld beads (welded). Check whether the rack is bolted into a
+      concrete floor.
+    askSeller: "Does it disassemble, and is it currently bolted to the floor?"
+    decisionWeight: high

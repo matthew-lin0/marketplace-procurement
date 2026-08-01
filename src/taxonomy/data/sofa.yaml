@@ -1,0 +1,74 @@
+category: sofa
+communities:
+  - "reddit.com/r/furniture"
+  - "reddit.com/r/HomeDecorating"
+  - "reddit.com/r/BuyItForLife"
+  - "reddit.com/r/interiordecorating"
+attributes:
+  - key: overall_dimensions
+    mattersBecause: >-
+      The most common failure in used furniture buying: the piece does not fit through
+      the door, up the stairwell, or in the room. Delivery is already the dominant cost
+      here, and a non-fitting sofa makes it a total loss.
+    visualTells: >-
+      Estimate against fixed references in the photo: a standard interior door is 30-32
+      inches wide and 80 inches tall, a standard outlet is 18 inches off the floor,
+      a typical seat cushion is 22-24 inches deep.
+    askSeller: "What are the exact width, depth, and height, and does it disassemble?"
+    decisionWeight: high
+
+  - key: frame_construction
+    mattersBecause: >-
+      Kiln-dried hardwood frames with joined corners last decades and justify a used
+      premium; particleboard and staple-assembled frames do not survive a move and
+      should price near zero.
+    visualTells: >-
+      Look at any photo showing the underside or a removed cushion. Exposed engineered
+      wood edges (visible layered particles) indicate low-end construction; solid wood
+      rails and corner blocks indicate the opposite.
+    askSeller: "Is the frame solid hardwood, and is it jointed or stapled?"
+    decisionWeight: high
+
+  - key: upholstery_material
+    mattersBecause: >-
+      Bonded leather delaminates and peels within a few years and cannot be repaired;
+      top-grain leather and performance fabrics clean up and last. They can look
+      identical in a listing photo.
+    visualTells: >-
+      Peeling that looks like flaking paint or plastic film is bonded leather failing.
+      Real leather shows pore texture and creases with use rather than cracking
+      uniformly. Check high-contact zones: seat front edge and arm tops.
+    askSeller: "Is it genuine leather, bonded leather, or fabric?"
+    decisionWeight: high
+
+  - key: odor_and_contamination
+    mattersBecause: >-
+      Smoke, pet odor, and bedbug exposure are undetectable in photos, are effectively
+      unfixable in upholstered furniture, and are the single biggest risk in buying a
+      used sofa. This attribute exists mainly to generate the seller question.
+    visualTells: >-
+      Photos cannot establish this. Look for indirect signals only: pet beds or litter
+      boxes in frame, ashtrays, yellowing on light fabric. Treat as unknown regardless.
+    askSeller: "Has it been in a home with smokers or pets? Any history of pest treatment?"
+    decisionWeight: high
+
+  - key: cushion_condition
+    mattersBecause: >-
+      Compressed foam cores are replaceable but the cost approaches the value of a
+      used sofa, and sagging is the most common reason a used sofa disappoints.
+    visualTells: >-
+      Look for visible sag in the seat line when unoccupied, wrinkled or loose fabric
+      on the seat cushions, and asymmetry between the end cushions and the middle.
+    askSeller: "Are the cushions still firm, and are the covers removable and washable?"
+    decisionWeight: medium
+
+  - key: sectional_configuration
+    mattersBecause: >-
+      Chaise orientation is fixed on many sectionals, and a left-facing chaise will not
+      work in a room that needs a right-facing one. Modular sectionals are also far
+      easier to move.
+    visualTells: >-
+      Determine chaise side as viewed while seated (the industry convention). Look for
+      separate modular pieces versus a single continuous frame.
+    askSeller: "Is the chaise left- or right-facing, and does it separate into pieces?"
+    decisionWeight: medium
