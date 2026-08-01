@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Feasibility eval harness: can vision models extract what a marketplace listing does not say?",
+  "description": "Browser extension that tells you what a used-goods listing does not say, plus the eval harness that tests it.",
   "engines": {
     "node": ">=22"
   },
