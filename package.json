@@ -15,14 +15,18 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:data-boundary": "tsx src/eval/checkDataBoundary.ts",
+    "build:taxonomy": "tsx src/taxonomy/build.ts",
+    "curate": "tsx src/eval/curate.ts",
     "smoke": "tsx src/eval/smoke.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
+    "cross-spawn": "^7.0.6",
     "yaml": "^2.6.1",
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
     "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",

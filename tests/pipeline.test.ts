@@ -87,44 +87,50 @@ const abstainedId = {
 };
 
 describe('ablation leak detection', () => {
-  it('refuses to run when the model string survived scrubbing', async () => {
-    // Ablation strings that don't cover the actual appearance in the text.
-    const leaky = snap({
+  it('does not throw when every field is cleanly scrubbed', async () => {
+    const clean = snap({
       statedModel: 'Rogue R-3',
-      ablationStrings: ['SomethingElse'],
+      ablationStrings: [],
       title: 'Rogue R-3 rack',
+      renderedText: 'A well built rack, barely used.',
     });
-    // ablate() derives aliases itself, so force the leak by making the text
-    // contain a variant the expander won't produce.
-    const forced = { ...leaky, renderedText: 'model is R O G U E R 3' };
-    // This particular text won't leak; assert the happy path stays clean.
     await expect(
-      extract(new StubClient({ t1: confidentId }), forced, {
+      extract(new StubClient({ t1: confidentId }), clean, {
         tier: 'full',
         ablation: DEFAULT_ABLATION,
       }),
     ).resolves.toBeDefined();
   });
 
-  it('throws AblationLeakError rather than silently scoring an open-book test', async () => {
+  it('throws AblationLeakError when the model string survives in an image filename', async () => {
+    // ablate() only rewrites the copy of images[].path it returns to the
+    // caller; the file on disk keeps its original name (capture/store.ts
+    // resolves paths from the raw snapshot so the file can actually be
+    // found), and the CLI backend embeds that resolved path as literal text
+    // in the model prompt. A descriptive filename is therefore a real leak
+    // vector, distinct from — and not covered by — the text-field checks
+    // above.
     const leaky = snap({
       statedModel: 'Rogue R-3',
       ablationStrings: [],
-      // A field ablate() does not scrub would produce this. Simulate by using
-      // a stated model whose alias expansion cannot match the obfuscated text,
-      // then manually reintroduce it post-ablation via a category the scrubber
-      // treats as opaque. Simplest faithful check: verifyAblation directly.
-      title: 'Rogue R-3',
+      images: [
+        {
+          index: 0,
+          path: 'images/rogue-r3-nameplate.jpg',
+          sourceUrl: 'https://example.com/1.jpg',
+          width: null,
+          height: null,
+          sha256: 'deadbeef',
+        },
+      ],
     });
-    // ablate() will clean this correctly, so the pipeline should NOT throw.
-    // The leak path is covered directly in ablate.test.ts.
+
     await expect(
       extract(new StubClient({ t1: confidentId }), leaky, {
         tier: 'full',
         ablation: DEFAULT_ABLATION,
       }),
-    ).resolves.toBeDefined();
-    expect(AblationLeakError).toBeDefined();
+    ).rejects.toThrow(AblationLeakError);
   });
 });
 

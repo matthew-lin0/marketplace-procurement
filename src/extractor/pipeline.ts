@@ -1,5 +1,5 @@
 import { MODELS } from '../config.js';
-import { ablate, verifyAblation } from '../capture/ablate.js';
+import { ablate, verifyAblation, verifyImagePaths } from '../capture/ablate.js';
 import { imagePaths, loadLabels } from '../capture/store.js';
 import {
   type ExtractionResult,
@@ -100,7 +100,15 @@ export async function extract(
   // Ablate FIRST, then verify. Everything downstream sees only the ablated
   // snapshot — a leak here silently inflates the headline number.
   const snapshot = ablate(rawSnapshot);
-  const leaks = verifyAblation(snapshot);
+
+  // Image paths must resolve from the RAW snapshot — the files on disk keep
+  // their original names — so they need their own leak check: a descriptive
+  // filename can leak the model string even when every text field is clean.
+  const allPaths = imagePaths(rawSnapshot);
+  const leaks = [
+    ...verifyAblation(snapshot),
+    ...verifyImagePaths(allPaths, rawSnapshot.statedModel, rawSnapshot.ablationStrings),
+  ];
   if (leaks.length > 0) {
     throw new AblationLeakError(
       rawSnapshot.id,
@@ -115,7 +123,6 @@ export async function extract(
   const taxonomy = await loadTaxonomy(snapshot.category);
   const labels = await loadLabels(snapshot.id);
 
-  const allPaths = imagePaths(rawSnapshot);
   const paths = ablation.includeImages
     ? ablation.allImages
       ? allPaths

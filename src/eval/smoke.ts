@@ -3,7 +3,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { LISTINGS_DIR, REPO_ROOT } from '../config.js';
 import { ablate, verifyAblation } from '../capture/ablate.js';
-import { saveSnapshot, sha256 } from '../capture/store.js';
+import { removeManifestEntry, saveSnapshot, sha256 } from '../capture/store.js';
 import { CliClient } from '../extractor/client/cliClient.js';
 import { DEFAULT_ABLATION, extract } from '../extractor/pipeline.js';
 import type { ListingSnapshot } from '../schema/index.js';
@@ -251,8 +251,10 @@ async function main(): Promise<void> {
 
     console.log(`\nStages run: ${result.usage.map((u) => u.stage).join(', ')}`);
   } finally {
-    // Never leave synthetic data where a real eval would pick it up.
+    // Never leave synthetic data where a real eval would pick it up — that
+    // includes the manifest entry saveSnapshot() wrote, not just the files.
     await fs.rm(dir, { recursive: true, force: true });
+    await removeManifestEntry(SMOKE_ID);
     console.log(`\nRemoved synthetic fixture ${SMOKE_ID}`);
   }
 }

@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import spawn from 'cross-spawn';
 import path from 'node:path';
 import { z } from 'zod';
 import type { ModelClient, ModelRequest, ModelResponse } from './types.js';
@@ -171,6 +171,12 @@ export class CliClient implements ModelClient {
     const timeoutMs = this.opts.timeoutMs ?? 10 * 60_000;
 
     return new Promise((resolve, reject) => {
+      // node:child_process.spawn can't run `claude` directly on Windows — npm
+      // installs global CLI shims as .cmd/.ps1, not a plain .exe, and spawn()
+      // only execs .exe without a shell. `shell: true` "fixes" that but stops
+      // escaping args (Node's own DEP0190 warning), which corrupts the
+      // --json-schema argument. cross-spawn resolves the shim and quotes
+      // arguments correctly on both counts, with no shell involved on macOS/Linux.
       const child = spawn('claude', args, {
         cwd: this.opts.cwd,
         stdio: ['pipe', 'pipe', 'pipe'],
@@ -187,8 +193,10 @@ export class CliClient implements ModelClient {
         reject(new ModelCallError(`stage ${stage}: timed out after ${timeoutMs}ms`, stage, true));
       }, timeoutMs);
 
-      child.stdout.on('data', (d) => (stdout += d));
-      child.stderr.on('data', (d) => (stderr += d));
+      // Non-null: stdio is ['pipe', 'pipe', 'pipe'] above, cross-spawn's types
+      // just don't narrow on that the way node:child_process's do.
+      child.stdout!.on('data', (d) => (stdout += d));
+      child.stderr!.on('data', (d) => (stderr += d));
 
       child.on('error', (err) => {
         if (settled) return;
@@ -214,8 +222,8 @@ export class CliClient implements ModelClient {
         resolve(stdout);
       });
 
-      child.stdin.write(stdin);
-      child.stdin.end();
+      child.stdin!.write(stdin);
+      child.stdin!.end();
     });
   }
 }

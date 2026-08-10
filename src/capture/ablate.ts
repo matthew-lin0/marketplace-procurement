@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { ListingSnapshot } from '../schema/index.js';
 
 /**
@@ -133,6 +134,12 @@ export interface AblationLeak {
   context: string;
 }
 
+function ablationStringsFor(statedModel: string | null, ablationStrings: string[]): string[] {
+  return [...ablationStrings, ...(statedModel ? expandAliases(statedModel) : [])].filter(
+    (s) => s.trim().length >= 3,
+  );
+}
+
 /**
  * Asserts the scrub worked. Any hit is a build failure, not a warning — a
  * leaked model string turns T1 into an open-book test and invalidates the
@@ -142,9 +149,7 @@ export function verifyAblation(ablated: ListingSnapshot): AblationLeak[] {
   const leaks: AblationLeak[] = [];
   if (!ablated.statedModel) return leaks;
 
-  const strings = [...ablated.ablationStrings, ...expandAliases(ablated.statedModel)].filter(
-    (s) => s.trim().length >= 3,
-  );
+  const strings = ablationStringsFor(ablated.statedModel, ablated.ablationStrings);
 
   const check = (field: string, text: string) => {
     for (const s of strings) {
@@ -169,6 +174,39 @@ export function verifyAblation(ablated: ListingSnapshot): AblationLeak[] {
   ablated.images.forEach((img, i) => {
     check(`images[${i}].path`, img.path);
     check(`images[${i}].sourceUrl`, img.sourceUrl);
+  });
+
+  return leaks;
+}
+
+/**
+ * `verifyAblation` only sees the scrubbed copy of `images[].path`, which
+ * nothing downstream actually reads — the real file on disk keeps its
+ * original name (see `ablate`'s doc comment), so the extractor resolves
+ * image paths from the *raw* snapshot to find the file, and the CLI backend
+ * embeds that resolved path as literal text in the model prompt. A
+ * descriptive filename (e.g. "rogue-r3-nameplate.jpg") is therefore a real
+ * leak distinct from anything `verifyAblation` covers, and must be checked
+ * against the paths actually handed to the client.
+ */
+export function verifyImagePaths(
+  resolvedPaths: string[],
+  statedModel: string | null,
+  ablationStrings: string[],
+): AblationLeak[] {
+  const leaks: AblationLeak[] = [];
+  if (!statedModel) return leaks;
+
+  const strings = ablationStringsFor(statedModel, ablationStrings);
+
+  resolvedPaths.forEach((p, i) => {
+    const base = path.basename(p);
+    for (const s of strings) {
+      const match = toFlexiblePattern(s).exec(base);
+      if (match) {
+        leaks.push({ field: `resolvedImagePaths[${i}]`, matched: match[0], context: base });
+      }
+    }
   });
 
   return leaks;

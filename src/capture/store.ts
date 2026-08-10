@@ -124,3 +124,12 @@ async function upsertManifest(entry: ManifestEntry): Promise<void> {
   await fs.mkdir(path.dirname(MANIFEST_PATH), { recursive: true });
   await fs.writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
 }
+
+/** Undoes `upsertManifest`. Only real caller: smoke.ts cleaning up its
+ *  synthetic fixture, so it doesn't pollute the committed manifest. */
+export async function removeManifestEntry(id: string): Promise<void> {
+  const manifest = await readManifest();
+  const next = manifest.filter((m) => m.id !== id);
+  if (next.length === manifest.length) return;
+  await fs.writeFile(MANIFEST_PATH, JSON.stringify(next, null, 2), 'utf8');
+}
