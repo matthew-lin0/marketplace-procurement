@@ -17,6 +17,7 @@
     "check:data-boundary": "tsx src/eval/checkDataBoundary.ts",
     "build:taxonomy": "tsx src/taxonomy/build.ts",
     "curate": "tsx src/eval/curate.ts",
+    "comps": "tsx src/eval/comps.ts",
     "smoke": "tsx src/eval/smoke.ts"
   },
   "dependencies": {
@@ -27,7 +28,9 @@
   },
   "devDependencies": {
     "@types/cross-spawn": "^6.0.6",
+    "@types/jsdom": "^30.0.0",
     "@types/node": "^22.10.0",
+    "jsdom": "^30.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"

@@ -27,9 +27,20 @@
     return 'other';
   }
 
+  /** Some SPAs (Facebook Marketplace confirmed) render the listing you're
+   *  actually viewing as a modal dialog on top of whatever page you navigated
+   *  from — a search results page still full of OTHER listings' text and
+   *  images. role="dialog" is a stable accessibility landmark (unlike
+   *  generated class names) that scopes to just the listing being viewed,
+   *  when one is present; falls back to the whole page otherwise, so this is
+   *  a strict improvement with no new failure mode. */
+  function contentRoot() {
+    return document.querySelector('[role="dialog"]') || document.body;
+  }
+
   function visibleText() {
     // Clone so removals don't disturb the live page.
-    const body = document.body.cloneNode(true);
+    const body = contentRoot().cloneNode(true);
     for (const el of body.querySelectorAll('script, style, noscript, svg, nav, header, footer')) {
       el.remove();
     }
@@ -59,10 +70,11 @@
   }
 
   function images() {
+    const root = contentRoot();
     const seen = new Set();
     const out = [];
 
-    for (const img of document.querySelectorAll('img')) {
+    for (const img of root.querySelectorAll('img')) {
       // Skip avatars, icons, and tracking pixels by rendered size.
       const w = img.naturalWidth || img.width;
       const h = img.naturalHeight || img.height;
@@ -88,9 +100,12 @@
     }
 
     // Also catch CSS background images used by some galleries.
-    for (const el of document.querySelectorAll('[style*="background-image"]')) {
+    for (const el of root.querySelectorAll('[style*="background-image"]')) {
       const m = /url\(["']?(.*?)["']?\)/.exec(el.getAttribute('style') || '');
       if (!m || !m[1] || m[1].startsWith('data:')) continue;
+      // Not a listing photo: Facebook's "approximate location" widget renders
+      // as a background-image static map tile inside the same dialog.
+      if (/static_map\.php/i.test(m[1])) continue;
       const abs = new URL(m[1], location.href).href;
       const upgraded = fullResUrl(abs);
       if (seen.has(upgraded)) continue;
@@ -102,7 +117,7 @@
   }
 
   function price() {
-    const text = document.body.innerText || '';
+    const text = contentRoot().innerText || contentRoot().textContent || '';
     const m = /\$\s?([\d,]+(?:\.\d{2})?)/.exec(text);
     return m ? Number.parseFloat(m[1].replace(/,/g, '')) : null;
   }
@@ -113,6 +128,11 @@
   function titleHint() {
     const cl = document.querySelector('#titletextonly');
     if (cl && cl.textContent) return cl.textContent.trim();
+    // Facebook's og:title on marketplace item pages is a generic
+    // "Marketplace" string, not the listing's own title — the dialog's own
+    // <h1> (if a dialog is present at all) is the real one.
+    const dialogH1 = document.querySelector('[role="dialog"] h1');
+    if (dialogH1 && dialogH1.textContent) return dialogH1.textContent.trim();
     const og = document.querySelector('meta[property="og:title"]');
     if (og) return og.getAttribute('content') || document.title;
     const h1 = document.querySelector('h1');
@@ -120,22 +140,54 @@
     return document.title;
   }
 
-  function descriptionHint() {
+  /** Facebook's dialog renders "...Details Condition{tier}{description}
+   *  {city}, {state} · Location is approximate...", with NO separator between
+   *  the description and the city name that follows it. The city is
+   *  extracted first from an earlier, cleanly-delimited spot ("ago in {city}
+   *  Message") and then used as a literal anchor to trim the description's
+   *  tail — guessing that boundary with a character class instead silently
+   *  eats part of the real description (validated against real captures
+   *  before landing this). Returns null fields, not throws, if the shape
+   *  doesn't match. */
+  function dialogDetails() {
+    const dialog = document.querySelector('[role="dialog"]');
+    if (!dialog) return { locationText: null, description: null };
+    const text = dialog.textContent || '';
+
+    const locMatch = /ago in (.+?)Message/.exec(text);
+    const locationText = locMatch ? locMatch[1].trim() : null;
+
+    const condMatch = /Condition(New|Used - Like new|Used - Good|Used - Fair)/.exec(text);
+    if (!condMatch) return { locationText, description: null };
+
+    let rest = text.slice(condMatch.index + condMatch[0].length);
+    if (locationText) {
+      const escaped = locationText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      rest = rest.replace(new RegExp(`${escaped}\\s*·\\s*Location is approximate[\\s\\S]*$`), '');
+    }
+    const description = rest.trim();
+    return { locationText, description: description || null };
+  }
+
+  function descriptionHint(details) {
     const cl = document.querySelector('#postingbody');
     if (cl && cl.innerText) return cl.innerText.trim();
+    if (details.description) return details.description;
     const og = document.querySelector('meta[property="og:description"]');
     if (og) return og.getAttribute('content') || '';
     return '';
   }
+
+  const details = dialogDetails();
 
   return {
     sourceUrl: location.href,
     marketplace: marketplace(),
     capturedAt: new Date().toISOString(),
     title: titleHint(),
-    description: descriptionHint(),
+    description: descriptionHint(details),
     priceUsd: price(),
-    locationText: null,
+    locationText: details.locationText,
     renderedText: visibleText(),
     jsonLd: jsonLd(),
     // Raw bytes, unmodified. Normalization is the thing under test, so it has

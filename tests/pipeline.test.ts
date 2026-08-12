@@ -216,6 +216,66 @@ describe('T1 confidence gating', () => {
   });
 });
 
+describe('T6 msrp_depreciated fallback', () => {
+  // No data/labels/ fixture exists for these ids, so comps is always empty —
+  // below MIN_COMPS, which is what triggers the msrp lookup at all.
+  const negotiateBase = {
+    askingPremiumUsd: null,
+    levers: [],
+    walkAwayUsd: null,
+    batna: null,
+    sellerMotivation: { daysListed: null, priceDrops: null, relistCount: null, confidence: 0 },
+    openingOfferUsd: null,
+    unknowns: [],
+  };
+
+  it('accepts an msrp_depreciated estimate when a real sourced MSRP was found', async () => {
+    const client = new StubClient({
+      t1: confidentId,
+      t2: { attributes: [], questionsForSeller: [] },
+      t4: { rankedKeys: [], rationale: '' },
+      't6.msrp_lookup': { found: true, msrpUsd: 300, url: 'https://example.com/spec', asOf: '2026' },
+      't6.negotiate': {
+        ...negotiateBase,
+        fairValue: { low: 50, point: 80, high: 120, basis: 'msrp_depreciated' },
+      },
+    });
+
+    const result = await extract(client, snap(), {
+      tier: 'full',
+      ablation: DEFAULT_ABLATION,
+      bypassSentimentCache: true,
+    });
+
+    expect(result.negotiation?.fairValue.basis).toBe('msrp_depreciated');
+    expect(result.negotiation?.fairValue.point).toBe(80);
+  });
+
+  it('overrides a claimed msrp_depreciated estimate to insufficient_data when no real MSRP backs it', async () => {
+    // Simulates the model ignoring instructions and returning a number anyway
+    // — the code must not trust the self-reported basis without a real lookup.
+    const client = new StubClient({
+      t1: confidentId,
+      t2: { attributes: [], questionsForSeller: [] },
+      t4: { rankedKeys: [], rationale: '' },
+      't6.msrp_lookup': { found: false, msrpUsd: null, url: null, asOf: null },
+      't6.negotiate': {
+        ...negotiateBase,
+        fairValue: { low: 50, point: 80, high: 120, basis: 'msrp_depreciated' },
+      },
+    });
+
+    const result = await extract(client, snap(), {
+      tier: 'full',
+      ablation: DEFAULT_ABLATION,
+      bypassSentimentCache: true,
+    });
+
+    expect(result.negotiation?.fairValue.basis).toBe('insufficient_data');
+    expect(result.negotiation?.fairValue.point).toBeNull();
+  });
+});
+
 describe('evidence enforcement', () => {
   it('drops a photo claim with no image cited', async () => {
     const client = new StubClient({

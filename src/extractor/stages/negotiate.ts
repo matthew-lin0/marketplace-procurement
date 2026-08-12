@@ -1,5 +1,6 @@
 import { CONFIDENT_TIER_THRESHOLD, MAX_COMP_DISTANCE_MILES, MIN_COMPS } from '../../config.js';
 import {
+  MsrpLookup,
   NegotiationBrief,
   type Comp,
   type IdentifyResult,
@@ -10,7 +11,7 @@ import {
   type InclusionSet,
   type UsageRecord,
 } from '../../schema/index.js';
-import { negotiationPrompt, SYSTEM_APPRAISER } from '../prompts.js';
+import { msrpLookupPrompt, negotiationPrompt, SYSTEM_APPRAISER } from '../prompts.js';
 import type { ModelClient } from '../client/types.js';
 
 /**
@@ -80,6 +81,26 @@ export async function runNegotiate(
 
   const comps = selectComps(labels?.comps ?? [], opts.compSources);
   const findings = buildFindingIndex(attributes, inclusions, sentiment, opts);
+  const usage: UsageRecord[] = [];
+
+  // Comps are the real pricing basis. Only when they're too thin to price from
+  // do we spend a call looking up a retail/MSRP reference — and even then,
+  // only a real, sourced number is usable; a recalled price is worse than none.
+  let msrp: MsrpLookup | null = null;
+  if (comps.length < MIN_COMPS && identify.brand && identify.model) {
+    const msrpRes = await client.run<MsrpLookup>({
+      stage: 't6.msrp_lookup',
+      model: opts.model,
+      system: SYSTEM_APPRAISER,
+      prompt: msrpLookupPrompt(identify.brand, identify.model, identify.generation),
+      schema: MsrpLookup,
+      allowWebSearch: true,
+    });
+    usage.push(msrpRes.usage);
+    if (msrpRes.parsed?.found && msrpRes.parsed.msrpUsd !== null && msrpRes.parsed.url) {
+      msrp = msrpRes.parsed;
+    }
+  }
 
   const res = await client.run<NegotiationBrief>({
     stage: 't6.negotiate',
@@ -91,12 +112,14 @@ export async function runNegotiate(
       renderFindings(findings),
       renderCosts(labels),
       renderTiming(snapshot),
+      renderMsrp(msrp),
     ),
     schema: NegotiationBrief,
   });
+  usage.push(res.usage);
 
   if (!res.parsed) {
-    return { brief: null, usage: [res.usage], skipped: [], droppedLevers: 0, validCompCount: comps.length };
+    return { brief: null, usage, skipped: [], droppedLevers: 0, validCompCount: comps.length };
   }
 
   const validIds = new Set(findings.map((f) => f.id));
@@ -104,11 +127,15 @@ export async function runNegotiate(
   const droppedLevers = res.parsed.levers.length - keptLevers.length;
 
   // Enforce the abstention rule in code rather than trusting the prompt. Thin
-  // data must not produce a point estimate no matter what the model returns.
+  // data must not produce a point estimate no matter what the model returns —
+  // and an msrp_depreciated estimate is only trusted if a real lookup actually
+  // backed it; the model claiming that basis without one doesn't count.
   const fairValue =
-    comps.length < MIN_COMPS
-      ? { low: null, point: null, high: null, basis: 'insufficient_data' as const }
-      : res.parsed.fairValue;
+    comps.length >= MIN_COMPS
+      ? res.parsed.fairValue
+      : msrp && res.parsed.fairValue.basis === 'msrp_depreciated' && res.parsed.fairValue.low !== null
+        ? res.parsed.fairValue
+        : { low: null, point: null, high: null, basis: 'insufficient_data' as const };
 
   const askingPremium =
     fairValue.point !== null && snapshot.priceUsd !== null
@@ -125,7 +152,7 @@ export async function runNegotiate(
       walkAwayUsd: fairValue.low === null ? null : res.parsed.walkAwayUsd,
       openingOfferUsd: fairValue.point === null ? null : res.parsed.openingOfferUsd,
     },
-    usage: [res.usage],
+    usage,
     skipped: [],
     droppedLevers,
     validCompCount: comps.length,
@@ -237,6 +264,17 @@ Refurb / parts needed: ${
       : 'not supplied'
   }
 </costs>`;
+}
+
+function renderMsrp(msrp: MsrpLookup | null): string {
+  if (!msrp) {
+    return '<retail_reference>\n(no retail/MSRP price found — do not use basis="msrp_depreciated")\n</retail_reference>';
+  }
+  return `<retail_reference>
+Current retail/MSRP: $${msrp.msrpUsd}, as of ${msrp.asOf ?? 'unknown date'}, source: ${msrp.url}
+This is a NEW-condition price with zero market signal about used demand. Do not
+anchor near it — depreciate heavily and reflect the uncertainty in a wide range.
+</retail_reference>`;
 }
 
 /**

@@ -294,12 +294,31 @@ interpretation.`;
 
 // --- T6: negotiation -------------------------------------------------------
 
+export function msrpLookupPrompt(brand: string, model: string, generation: string | null): string {
+  return `Look up the CURRENT retail/MSRP price for a new unit of:
+  Brand: ${brand}
+  Model: ${model}
+  Generation: ${generation ?? 'unspecified'}
+
+Search for the manufacturer's own product page, or a current major retailer
+selling this as new. Only report a price if you find one from a source you can
+cite.
+
+Set found=true and fill in msrpUsd, url, and asOf (the year or date the price
+was observed) only if you found a real current price with a real source. If you
+cannot find this specific model being sold new today — discontinued, wrong
+generation, or no source at all — set found=false and leave the other fields
+null. Do not estimate or recall a price from memory: an unsourced number here
+is worse than none, because it becomes an anchor for a real negotiation.`;
+}
+
 export function negotiationPrompt(
   snapshot: ListingSnapshot,
   compsBlock: string,
   findingsBlock: string,
   costsBlock: string,
   timingBlock: string,
+  msrpBlock: string,
 ): string {
   return `${listingContext(snapshot)}
 
@@ -310,6 +329,8 @@ ${findingsBlock}
 ${costsBlock}
 
 ${timingBlock}
+
+${msrpBlock}
 
 Assemble a negotiation position for the BUYER. This is evidence assembly, not
 persuasion coaching. The buyer will be talking to a seller who may know this
@@ -323,9 +344,20 @@ Fair value:
   transaction prices, and stale listings are stale precisely because they are
   overpriced. If you only have asking comps, set basis="corpus_asking" and be
   conservative.
-- If you have fewer than 3 valid comps, set basis="insufficient_data" and leave
-  low/point/high null. Refusing to produce a number is a valid and often correct
-  answer. Do not manufacture a range from thin data.
+- If you have fewer than 3 valid comps AND a retail/MSRP price is provided
+  above, you may estimate from that retail price depreciated for the condition
+  shown in the findings above. Set basis="msrp_depreciated". This method has NO
+  market signal at all — it does not know what buyers actually pay for a used
+  one, only what a new one costs and what looks wrong in photos. Reflect that
+  with a WIDE low/high range, not a tight one, and weight your point estimate
+  well below MSRP: for mass-market goods, age, obsolescence, and demand erode
+  used value far more than visible damage does, and none of that is visible in
+  a photo. A confident-looking narrow range here would be worse than
+  insufficient_data.
+- If you have fewer than 3 valid comps and no retail price is available either,
+  set basis="insufficient_data" and leave low/point/high null. Refusing to
+  produce a number is a valid and often correct answer. Do not manufacture a
+  range from thin data.
 
 Levers:
 - Every lever MUST reference a real finding id from the findings above via

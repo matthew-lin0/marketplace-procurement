@@ -163,9 +163,23 @@ export type SentimentResult = z.infer<typeof SentimentResult>;
 export const FairValueBasis = z.enum([
   'ebay_sold', // real transaction prices; preferred
   'corpus_asking', // asking prices; biased high, see docs
-  'insufficient_data', // fewer than MIN_COMPS. A valid, often correct output.
+  'msrp_depreciated', // retail price minus visible-condition estimate; last
+  // resort — no market signal at all, wide uncertainty by construction
+  'insufficient_data', // fewer than MIN_COMPS and no usable retail reference.
+  // A valid, often correct output.
 ]);
 export type FairValueBasis = z.infer<typeof FairValueBasis>;
+
+/** T6 fallback pricing input: a real, sourced retail/MSRP price, looked up
+ *  only when comps are too thin to price from directly. found=false (rather
+ *  than a recalled number) is required whenever no citable source exists. */
+export const MsrpLookup = z.object({
+  found: z.boolean(),
+  msrpUsd: z.number().nullable(),
+  url: z.string().nullable(),
+  asOf: z.string().nullable(),
+});
+export type MsrpLookup = z.infer<typeof MsrpLookup>;
 
 export const Comp = z.object({
   id: z.string(),
