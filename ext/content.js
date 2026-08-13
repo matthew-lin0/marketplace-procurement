@@ -178,21 +178,31 @@
     return '';
   }
 
-  const details = dialogDetails();
+  function capture() {
+    const details = dialogDetails();
+    return {
+      sourceUrl: location.href,
+      marketplace: marketplace(),
+      capturedAt: new Date().toISOString(),
+      title: titleHint(),
+      description: descriptionHint(details),
+      priceUsd: price(),
+      locationText: details.locationText,
+      renderedText: visibleText(),
+      jsonLd: jsonLd(),
+      // Raw bytes, unmodified. Normalization is the thing under test, so it has
+      // to be re-runnable against the original.
+      html: document.documentElement.outerHTML,
+      images: images(),
+    };
+  }
 
-  return {
-    sourceUrl: location.href,
-    marketplace: marketplace(),
-    capturedAt: new Date().toISOString(),
-    title: titleHint(),
-    description: descriptionHint(details),
-    priceUsd: price(),
-    locationText: details.locationText,
-    renderedText: visibleText(),
-    jsonLd: jsonLd(),
-    // Raw bytes, unmodified. Normalization is the thing under test, so it has
-    // to be re-runnable against the original.
-    html: document.documentElement.outerHTML,
-    images: images(),
-  };
+  // Exposed so a second content script (overlay.js), loaded into the same
+  // isolated world when this file is auto-injected, can re-run a fresh
+  // capture on demand instead of scraping the page a second time itself.
+  // Doesn't touch the page's own global scope — content script isolated
+  // worlds each get their own `window`.
+  window.__captureListing = capture;
+
+  return capture();
 })();

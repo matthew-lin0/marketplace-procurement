@@ -28,5 +28,21 @@
     ],
     "snapshotSha256": "f0d2411a54e002e69fd1bc4a20518f9c0d5563a92ebe549551fa984c231dbcc7",
     "hasStatedModel": false
+  },
+  {
+    "id": "monitor-67e879600e",
+    "sourceUrl": "https://www.facebook.com/marketplace/item/1560710785647040/?ref=search&referral_code=null&referral_story_type=post",
+    "marketplace": "facebook",
+    "category": "monitor",
+    "split": "dev",
+    "capturedAt": "2026-08-12T20:22:08.242Z",
+    "imageCount": 3,
+    "imageHashes": [
+      "a087893f3be27c89a2f7fa0a882a092fd5042865b6eb2c3f95cf8979056f1d40",
+      "b01a9fee27356eae0593f4b762af79779f4e84906ac5e2a21ec9bb07b93c99da",
+      "46cdd92db02c1f0f4ba1869396d9b9801c168bfdeb6b7abe23171da1e579387a"
+    ],
+    "snapshotSha256": "61ee81b6bb2d9d1bac5a38f30211e8e5e175a2c951585fbe453338e5ec67e0d4",
+    "hasStatedModel": false
   }
 ]

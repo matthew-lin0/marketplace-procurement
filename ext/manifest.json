@@ -15,5 +15,12 @@
   },
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/marketplace/item/*", "https://*.craigslist.org/*"],
+      "js": ["content.js", "overlay.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

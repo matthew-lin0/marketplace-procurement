@@ -1,0 +1,132 @@
+# Test category for the quick-analyze overlay feature. Specs are usually
+# stated somewhere in the listing or a spec-lookup page, but buyers who don't
+# already know the category rarely know which numbers to check.
+category: monitor
+communities:
+  - "reddit.com/r/Monitors"
+  - "reddit.com/r/OLED_Gaming"
+  - "rtings.com"
+attributes:
+  - key: release_year
+    mattersBecause: >-
+      Ages the whole spec sheet at once — panel tech, port standards (HDMI 2.0 vs
+      2.1), and adaptive-sync generation all shifted meaningfully year to year. A
+      model name alone can look current while actually being several years old.
+    visualTells: "Not visible; spec-lookup target once the model is identified."
+    askSeller: "Do you know roughly what year this was purchased or released?"
+    decisionWeight: medium
+
+  - key: new_price_reference_usd
+    mattersBecause: >-
+      Reference point for the used asking price, and a rough proxy for original
+      build quality/tier within the brand's lineup. This is the price for a NEW
+      unit — it says nothing about current used market value, which depends on
+      age, condition, and demand in ways a price-tracking page cannot capture.
+      A manufacturer spec sheet rarely carries pricing for an aged product;
+      a price-history page (e.g. PCPartPicker) is a better source for this one
+      attribute specifically.
+    visualTells: "Not visible; spec-lookup target once the model is identified."
+    askSeller: "Do you remember roughly what you paid for it new, if you were the original owner?"
+    decisionWeight: low
+
+  - key: refresh_rate_hz
+    mattersBecause: >-
+      The single biggest driver of felt smoothness in fast motion. A 60Hz panel sold
+      as a "gaming monitor" is a downgrade from what most current phones and many
+      laptops already ship, and the difference is immediately obvious side by side —
+      but invisible in a photo and easy for a casual seller to omit or misstate.
+    visualTells: >-
+      Sometimes printed on a rear sticker or the box if shown. Otherwise not visible;
+      this is a spec-lookup target once the model is identified.
+    askSeller: "What's the max refresh rate — 60Hz, 144Hz, 165Hz, something else?"
+    decisionWeight: high
+
+  - key: panel_type
+    mattersBecause: >-
+      TN, VA, IPS, and OLED trade off response time, color accuracy, viewing angles,
+      and burn-in risk very differently. Two monitors that look identical in a listing
+      photo can have opposite strengths depending on panel tech, and sellers rarely
+      state it because they often don't know it themselves.
+    visualTells: >-
+      Not reliably visible in a photo. Off-angle color shift in a photo taken at an
+      angle can hint at TN or VA, but treat this as a spec-lookup target, not a
+      photo read.
+    askSeller: "Is this an IPS, VA, TN, or OLED panel?"
+    decisionWeight: high
+
+  - key: response_time_ms
+    mattersBecause: >-
+      Determines motion blur/ghosting during fast movement. Marketing response-time
+      numbers (often "1ms") are measured in a best-case mode that may not be the
+      panel's default state, so the spec-sheet number and the real-world number can
+      differ — worth flagging as a caveat, not just reporting the headline figure.
+    visualTells: "Not visible in photos; spec-lookup target."
+    askSeller: "What's the rated response time, and do you know if it needs an OSD setting enabled to hit it?"
+    decisionWeight: high
+
+  - key: resolution
+    mattersBecause: >-
+      Determines both sharpness and the GPU horsepower needed to hit high frame rates
+      at that resolution — a 4K 144Hz monitor needs a much more powerful (expensive)
+      GPU to actually use than a 1080p 144Hz one, which a first-time buyer often
+      doesn't realize until after purchase.
+    visualTells: "Sometimes on a rear sticker if a clear photo of the back is shown."
+    askSeller: "What's the native resolution — 1080p, 1440p, 4K?"
+    decisionWeight: high
+
+  - key: adaptive_sync
+    mattersBecause: >-
+      G-Sync (Nvidia) and FreeSync (AMD) are not universally cross-compatible, and a
+      mismatch with the buyer's GPU brand means no tear-free benefit despite paying
+      for the feature. "G-Sync Compatible" (certified FreeSync) is a different,
+      weaker claim than a full G-Sync module — a distinction sellers rarely draw.
+    visualTells: "Not visible; spec-lookup target."
+    askSeller: "Does it support G-Sync, FreeSync, both, or neither?"
+    decisionWeight: medium
+
+  - key: size_and_curvature
+    mattersBecause: >-
+      Desk fit and immersion. A curved ultrawide needs meaningfully more desk depth
+      and a specific desk shape to sit correctly, and photos taken straight-on can
+      make a curved panel look flat.
+    visualTells: >-
+      Check any side-angle or 3/4 photo for visible curvature. A straight-on photo
+      alone is not enough to rule curvature out.
+    askSeller: "What's the screen size, and is it flat or curved?"
+    decisionWeight: medium
+
+  - key: ports_and_inputs
+    mattersBecause: >-
+      Console gamers specifically need HDMI 2.1 for 4K/120Hz, which many "gaming"
+      monitors still lack despite otherwise-strong specs. Determines whether the
+      monitor can actually deliver its advertised spec with the buyer's specific
+      device, not just a PC.
+    visualTells: >-
+      A clear photo of the rear I/O panel can show port types and count directly —
+      worth explicitly asking for if not already shown.
+    askSeller: "Can you send a photo of the ports on the back, or list them?"
+    decisionWeight: medium
+
+  - key: dead_pixels_and_burn_in
+    mattersBecause: >-
+      Not covered by most used-sale "as-is" terms once returned, and especially
+      relevant for OLED panels where static UI elements (taskbars, HUDs) can leave
+      permanent burn-in that is invisible on a bright, colorful test photo.
+    visualTells: >-
+      Ask for a photo of a plain gray or white full-screen image, powered on — the
+      condition under which dead pixels and burn-in are actually visible. A photo of
+      a colorful desktop or game is not sufficient to rule this out.
+    askSeller: "Can you send a photo of the screen powered on showing a plain white or gray background?"
+    decisionWeight: high
+
+  - key: stand_and_mount
+    mattersBecause: >-
+      Height/tilt/swivel adjustability and VESA mount compatibility affect ergonomics
+      and whether the buyer can reuse an existing monitor arm. A monitor with a
+      fixed, non-adjustable stand is a meaningfully different purchase from one with
+      full ergonomic adjustment, even at an identical panel spec.
+    visualTells: >-
+      The stand's visible hinge mechanism in a side photo often reveals whether
+      height/tilt adjustment exists.
+    askSeller: "Does the stand adjust for height and tilt, and is it VESA-mount compatible if I want to use my own arm?"
+    decisionWeight: low

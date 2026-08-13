@@ -85,6 +85,41 @@ retrieved for the wrong model look credible while being irrelevant.
 Report confidence as your honest probability that the exact model is correct.`;
 }
 
+/** Fallback for the quick-analyze overlay when identifyPrompt's result
+ *  abstained. Different framing on purpose: identifyPrompt asks "what is
+ *  this, or admit you don't know"; this asks "list the plausible options" —
+ *  a genuinely different, easier task, not a trick to extract a guess from a
+ *  model that already declined to commit to one. */
+export function identifyCandidatesPrompt(
+  snapshot: ListingSnapshot,
+  taxonomy: CategoryTaxonomy | null,
+  family: string | null,
+): string {
+  const tax = renderTaxonomyForPrompt(taxonomy, { includeVisualTells: false });
+
+  return `${listingContext(snapshot)}
+
+${tax ? `${tax}\n` : ''}
+A prior attempt to identify the exact brand and model of the item in this
+listing came back inconclusive${family ? ` (best guess at category: "${family}")` : ''}.
+
+List up to 3 specific brand+model combinations that are PLAUSIBLE matches given
+the listing text — real, existing products you have genuine reason to think
+could be this one, not an arbitrary sample of popular items in this category.
+
+For each candidate:
+- Give your honest confidence that THIS SPECIFIC candidate is correct. These
+  should typically be low-to-moderate (this is a list of live possibilities,
+  not near-certainties — if you were confident, this wouldn't be a fallback
+  case at all).
+- State the reasoning: what in the listing text points toward this particular
+  model, and what would need to be true for it to be wrong.
+
+Return fewer than 3, or zero, if you cannot name that many genuine candidates.
+An empty list is correct when nothing in the text points toward specific
+products at all — do not pad the list with generic guesses.`;
+}
+
 // --- Crop-and-zoom ---------------------------------------------------------
 
 export function nameplateLocatePrompt(snapshot: ListingSnapshot): string {
@@ -126,9 +161,24 @@ attribute you find:
 - Set source to "spec_lookup" and put the source URL in evidence.url.
 - Put the sentence you took it from in evidence.quote, verbatim.
 
+For a pricing attribute specifically (current or historical new-unit price),
+a manufacturer page is often NOT where this lives — retailer listings get
+taken down once a product ages. A price-tracking page (e.g. PCPartPicker's
+price history for the exact model) is a valid authoritative source for this
+one kind of attribute; treat it the same as a manufacturer page, evidence
+requirements included. This does not license using such a page for anything
+other than price — specs still need a real spec source.
+
 If you cannot find an authoritative source for an attribute, omit it rather than
 filling it in from memory. Only mark an attribute source as "model_prior" if you
 are stating it from your own knowledge with no source — and prefer omitting it.
+
+Some specs have both a base/rated value and a higher boosted/overclocked/
+enhanced-mode value that only applies under a non-default setting (e.g. a
+monitor's native refresh rate vs. its overclocked max). Collapsing these into
+one number is misleading either direction — report both explicitly labeled
+("120Hz native, overclockable to 165Hz") when the source states both, rather
+than picking one.
 
 For anything you could not determine, add a question to questionsForSeller,
 phrased so the buyer can paste it directly into a message.`;

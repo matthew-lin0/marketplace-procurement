@@ -56,6 +56,26 @@ export const IdentifyResult = z.object({
 });
 export type IdentifyResult = z.infer<typeof IdentifyResult>;
 
+/** Fallback for the quick-analyze overlay only, not the scored T1-T6
+ *  pipeline: when the real identify() call abstains, ask for a short list of
+ *  plausible matches instead of forcing a single guess or a bare "unknown."
+ *  Each candidate still carries its own confidence and reasoning — this is
+ *  "here are 3 options, you pick" (options 2 and 3 are always presented as
+ *  live possibilities), not a way to sneak a confident-sounding guess past
+ *  the abstention guardrail. */
+export const IdentifyCandidate = z.object({
+  brand: z.string(),
+  model: z.string(),
+  confidence: z.number().min(0).max(1),
+  reasoning: z.string(),
+});
+export type IdentifyCandidate = z.infer<typeof IdentifyCandidate>;
+
+export const IdentifyCandidates = z.object({
+  candidates: z.array(IdentifyCandidate).max(3),
+});
+export type IdentifyCandidates = z.infer<typeof IdentifyCandidates>;
+
 // --- T2 / T3: attributes and inclusions ------------------------------------
 
 export const AttributeSet = z.object({
@@ -250,6 +270,7 @@ export const CategoryKey = z.enum([
   'sofa',
   'laptop',
   'co2_incubator',
+  'monitor',
 ]);
 export type CategoryKey = z.infer<typeof CategoryKey>;
 

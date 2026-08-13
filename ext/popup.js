@@ -6,6 +6,7 @@ const SPLITS = {
   home_gym: 'dev',
   bicycle: 'dev',
   power_tool: 'dev',
+  monitor: 'dev',
   sofa: 'holdout',
   laptop: 'holdout',
   co2_incubator: 'holdout',
