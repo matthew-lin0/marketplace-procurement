@@ -383,6 +383,20 @@ describe('T6 scorers', () => {
     expect(s.correctAbstentionRate).toBe(0);
   });
 
+  it('credits msrp_depreciated on starved input — not a comp, but not ungrounded either', () => {
+    // negotiate.ts only ever sets this basis when a real, sourced retail
+    // price backed it (enforced in code, not trusted from the prompt), so a
+    // priced msrp_depreciated result on thin comps is the designed fallback
+    // working, not the abstention guard failing.
+    const s = scoreAbstention([
+      {
+        brief: brief({ fairValue: { low: 25, point: 50, high: 90, basis: 'msrp_depreciated' } }),
+        compCount: 0,
+      },
+    ]);
+    expect(s.correctAbstentionRate).toBe(1);
+  });
+
   it('flags an ungrounded lever', () => {
     const s = scoreLeverGrounding([
       {

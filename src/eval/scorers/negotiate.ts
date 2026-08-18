@@ -148,9 +148,14 @@ export function scoreLeverGrounding(
 
 export interface AbstentionScore {
   starvedCases: number;
-  /** Of cases given fewer than MIN_COMPS, how many correctly declined to
-   *  produce a point estimate. Refusing to produce a number is a valid, and
-   *  often correct, output. */
+  /** Of cases given fewer than MIN_COMPS, how many avoided producing an
+   *  UNGROUNDED point estimate. Two ways to do that: refuse outright
+   *  (insufficient_data / null point), or fall back to msrp_depreciated —
+   *  which is not abstention, but is not a violation either. That basis is
+   *  mechanically gated in negotiate.ts to only ever fire when a real,
+   *  sourced retail price backed it, so "starved of comps" there doesn't
+   *  mean "starved of grounding." Treating it as a failure here would
+   *  penalize the code for successfully using its designed fallback. */
   correctAbstentionRate: number;
 }
 
@@ -164,6 +169,7 @@ export function scoreAbstention(
     (c) =>
       c.brief === null ||
       c.brief.fairValue.basis === 'insufficient_data' ||
+      c.brief.fairValue.basis === 'msrp_depreciated' ||
       c.brief.fairValue.point === null,
   ).length;
 
